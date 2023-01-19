@@ -55,20 +55,41 @@ function animate() {
 
 animate(); */
 
+let mouse = {
+  x: undefined,
+  y: undefined,
+};
+
+const maxRadius = 40;
+
+const colorArray = ["#2C3E50", "#E74C3C", "#ECF0F1", "#3498DB", "#2980B9"];
+
+window.addEventListener("mousemove", (e) => {
+  mouse.x = e.x;
+  mouse.y = e.y;
+});
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
 class Circle {
   constructor(x, y, radius, dx, dy) {
     this.x = x;
     this.y = y;
     this.radius = radius;
+    this.minRadius = radius;
     this.dx = dx;
     this.dy = dy;
+    this.color = colorArray[Math.floor(Math.random() * colorArray.length)];
   }
 
   draw() {
     c.beginPath();
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    c.strokeStyle = "blue";
-    c.stroke();
+    c.fillStyle = this.color;
+    c.fill();
   }
 
   update() {
@@ -80,14 +101,23 @@ class Circle {
     }
     this.x += this.dx;
     this.y += this.dy;
+
+    if (Math.abs(mouse.x - this.x) < 50 && Math.abs(mouse.y - this.y) < 50) {
+      if (this.radius < maxRadius) {
+        this.radius += 1;
+      }
+    } else if (this.radius > this.minRadius) {
+      this.radius -= 1;
+    }
+
     this.draw();
   }
 }
 
 const circleArray = [];
 
-for (let i = 0; i < 100; i++) {
-  const radius = 30;
+for (let i = 0; i < 1500; i++) {
+  const radius = Math.random() * 3 + 1;
   let x = Math.random() * (innerWidth - radius * 2) + radius;
   let dx = (Math.random() - 0.5) * 8;
   let y = Math.random() * (innerHeight - radius * 2) + radius;
